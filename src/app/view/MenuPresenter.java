@@ -3,7 +3,7 @@ package app.view;
 import app.model.AgressoRecord;
 import app.model.Model;
 import app.view.data.DataPresenter;
-import app.view.data.DataViewNew;
+import app.view.data.DataView;
 import javafx.collections.FXCollections;
 import javafx.stage.Stage;
 
@@ -26,18 +26,8 @@ public class MenuPresenter {
 
     private void initialiseEventHandling() {
         menuView.getOpenAgressoFileButton().setOnAction(e -> openAgressoFileAction(menuView.getValutaConversionRateComboBoxValue()));
-
-        /**
-        menuView.getOpenEURfileButton().setOnAction(e -> openAgressoFileAction("EUR"));
-        menuView.getOpenKESfileButton().setOnAction(e -> openAgressoFileAction("KES"));
-        menuView.getOpenMYRfileButton().setOnAction(e -> openAgressoFileAction("MYR"));
-        menuView.getOpenUSDfileButton().setOnAction(e -> openAgressoFileAction("USD"));
-        */
-
         menuView.getShowDataButton().setOnAction(e -> showDataAction());
-
         menuView.getExitButton().setOnAction(e -> exitApplicationAction());
-
     }
 
     private void openAgressoFileAction(String valuta) {
@@ -47,21 +37,19 @@ public class MenuPresenter {
             System.out.println("Year Combobox = " + menuView.getYearComboBoxValue());
             System.out.println("Quarter Combobox = " + menuView.getQuarterComboBoxValue());
             System.out.println("Conversion Rate = " + menuView.getConversionRateTextFieldValue());
-            agressoRecords = model.readAgressoFile(file, valuta, menuView.getYearComboBoxValue(), menuView.getQuarterComboBoxValue(), menuView.getConversionRateTextFieldValue());
+            model.readAgressoFile(file, valuta, menuView.getYearComboBoxValue(), menuView.getQuarterComboBoxValue(), menuView.getConversionRateTextFieldValue());
         }
     }
 
     private void showDataAction() {
-        DataViewNew dataViewNew = new DataViewNew(FXCollections.observableList(agressoRecords));
-        dataViewNew.setPrefSize(1200, 800);
-        DataPresenter dataPresenter = new DataPresenter(model, dataViewNew, primaryStage);
-        menuView.getScene().setRoot(dataViewNew);
-        dataViewNew.getScene().getWindow().sizeToScene();
+        DataView dataView = new DataView(FXCollections.observableList(model.getAgressoRecordList()));
+        dataView.setPrefSize(1200, 800);
+        DataPresenter dataPresenter = new DataPresenter(model, dataView, primaryStage);
+        menuView.getScene().setRoot(dataView);
+        dataView.getScene().getWindow().sizeToScene();
     }
-
 
     private void exitApplicationAction() {
         primaryStage.close();
     }
-
 }

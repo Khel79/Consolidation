@@ -122,14 +122,18 @@ public class MenuView extends BorderPane {
 
     public String getValutaConversionRateComboBoxValue() {
         if (valutaConversionComboBox.getValue().toString().equals(valutaConversionRatesChoices[0])) {
-            return valutaConversionComboBox.getValue().toString().substring(7, 10);
+            return valutaConversionComboBox.getValue().toString().substring(11, 14);
         } else {
             return valutaConversionComboBox.getValue().toString().substring(0, 3);
         }
     }
 
     public double getConversionRateTextFieldValue() {
-        return Double.parseDouble(textFieldConversionRate.getText().replace(",", "."));
+        if (textFieldConversionRate.getText().isEmpty()) {
+            return 1;
+        } else {
+            return Double.parseDouble(textFieldConversionRate.getText().replace(",", "."));
+        }
     }
 
     public Button getOpenAgressoFileButton() {

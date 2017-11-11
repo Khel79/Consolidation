@@ -4,17 +4,25 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class MappingRecord {
 
+    private SimpleStringProperty group;
     private SimpleStringProperty accountNumber;
     private SimpleStringProperty accountName;
     private SimpleStringProperty mainCategory;
     private SimpleStringProperty subCategory;
 
-    public MappingRecord(String accountNumber, String accountName, String mainCategory, String subCategory) {
+    public MappingRecord(String group, String accountNumber, String accountName, String mainCategory, String subCategory) {
+        this.group = new SimpleStringProperty(group);
         this.accountNumber = new SimpleStringProperty(accountNumber);
         this.accountName = new SimpleStringProperty(accountName);
         this.mainCategory = new SimpleStringProperty(mainCategory);
         this.subCategory = new SimpleStringProperty(subCategory);
     }
+
+    public String getGroup() { return group.get(); }
+
+    public SimpleStringProperty groupProperty() { return group; }
+
+    public void setGroup(String group) { this.group.set(group); }
 
     public String getAccountNumber() {
         return accountNumber.get();
