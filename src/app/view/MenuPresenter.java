@@ -4,9 +4,10 @@ import app.model.AgressoRecord;
 import app.model.Model;
 import app.view.data.DataPresenter;
 import app.view.data.DataView;
+import app.view.mapping.MappingPresenter;
+import app.view.mapping.MappingView;
 import javafx.collections.FXCollections;
 import javafx.stage.Stage;
-
 import java.io.File;
 import java.util.List;
 
@@ -15,6 +16,8 @@ public class MenuPresenter {
     private Model model;
     private Stage primaryStage;
     private List<AgressoRecord> agressoRecords;
+
+    private static boolean mappingDataLoaded = false;
 
     public MenuPresenter(Model model, MenuView menuView, Stage primaryStage) {
         this.menuView = menuView;
@@ -27,7 +30,13 @@ public class MenuPresenter {
     private void initialiseEventHandling() {
         menuView.getOpenAgressoFileButton().setOnAction(e -> openAgressoFileAction(menuView.getValutaConversionRateComboBoxValue()));
         menuView.getShowDataButton().setOnAction(e -> showDataAction());
+        menuView.getShowMappingTableButton().setOnAction(e -> showMappingTableAction());
         menuView.getExitButton().setOnAction(e -> exitApplicationAction());
+    }
+
+    private void readMappingDataFromFiles() {
+        model.readCategoryMappingFile();
+        model.createMappingTable();
     }
 
     private void openAgressoFileAction(String valuta) {
@@ -47,6 +56,18 @@ public class MenuPresenter {
         DataPresenter dataPresenter = new DataPresenter(model, dataView, primaryStage);
         menuView.getScene().setRoot(dataView);
         dataView.getScene().getWindow().sizeToScene();
+    }
+
+    private void showMappingTableAction() {
+        if (!mappingDataLoaded) {
+            readMappingDataFromFiles();
+            mappingDataLoaded = true;
+        }
+        MappingView mappingView = new MappingView(FXCollections.observableList(model.getMappingTableList()));
+        mappingView.setPrefSize(1200, 800);
+        MappingPresenter mappingPresenter = new MappingPresenter(model, mappingView, primaryStage);
+        menuView.getScene().setRoot(mappingView);
+        mappingView.getScene().getWindow().sizeToScene();
     }
 
     private void exitApplicationAction() {

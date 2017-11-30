@@ -1,87 +1,95 @@
 package app.view.mapping;
 
-import app.model.AgressoRecord;
+import app.model.MappingRecord;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-
-import java.text.DecimalFormat;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class MappingView extends VBox {
-    private ObservableList<AgressoRecord> data = FXCollections.observableArrayList();
+    private ObservableList<MappingRecord> data = FXCollections.observableArrayList();
 
-    private TableView<AgressoRecord> table = new TableView<AgressoRecord>();
+    private TableView<MappingRecord> table = new TableView<MappingRecord>();
 
-    private TableColumn<AgressoRecord, String> groupColumn = new TableColumn<AgressoRecord, String>("Group");
-    private TableColumn<AgressoRecord, String> agressoNumberColumn = new TableColumn<AgressoRecord, String>("Account");
-    private TableColumn<AgressoRecord, String> agressoNameColumn = new TableColumn<AgressoRecord, String>("Account Description");
-    private TableColumn<AgressoRecord, Number> amountColumn = new TableColumn<AgressoRecord, Number>("Amount");
-    private TableColumn<AgressoRecord, String> valutaColumn = new TableColumn<AgressoRecord, String>("Valuta");
-    private TableColumn<AgressoRecord, String> countryColumn = new TableColumn<AgressoRecord, String>("Country");
-    private TableColumn<AgressoRecord, Number> amountInEuroColumn = new TableColumn<AgressoRecord, Number>("Amount in EUR");
-    private TableColumn<AgressoRecord, String> yearColumn = new TableColumn<AgressoRecord, String>("Year");
-    private TableColumn<AgressoRecord, String> quarterColumn = new TableColumn<AgressoRecord, String>("Quarter");
+    private TableColumn<MappingRecord, String> groupColumn = new TableColumn<MappingRecord, String>("Group");
+    private TableColumn<MappingRecord, String> accountNumberColumn = new TableColumn<MappingRecord, String>("Account");
+    private TableColumn<MappingRecord, String> accountNameColumn = new TableColumn<MappingRecord, String>("Account Description");
+    private TableColumn<MappingRecord, String> mainCategoryColumn = new TableColumn<MappingRecord, String>("Main Category");
+    private TableColumn<MappingRecord, String> subCategoryColumn = new TableColumn<MappingRecord, String>("Subcategory");
 
-    public MappingView(ObservableList<AgressoRecord> data) {
+    private Label mainCategoryComboBoxLabel = new Label("Select the main category");
+    private Label subCategoryComboBoxLabel = new Label("Select the sub category");
 
-        DecimalFormat decimalFormat = new DecimalFormat("###,###,##0.00");
-        TableView<AgressoRecord> tableView = new TableView<AgressoRecord>(data);
+    private ComboBox mainCategoryComboBox = new ComboBox();
+    private ComboBox subCategoryComboBox = new ComboBox();
+    private ComboBox groupComboBox = new ComboBox();
 
+    private Button addNewMainCategoryButton = new Button("Add a new main category");
+    private Button addNewSubCategoryButton = new Button("Add a new sub category");
+    private Button addNewTableMappingButton = new Button("Add a new tablemapping");
+
+    private TextField groupTextField = new TextField();
+    private TextField accountNumberTextField = new TextField();
+    private TextField accountNameTextField = new TextField();
+
+    private Label groupTextFieldLabel = new Label();
+    private Label accountNumberTextFieldLabel = new Label();
+    private Label accountNameTextFieldLabel = new Label();
+
+    private Label groupTextFieldErrorLabel = new Label();
+    private Label accountNumberTextFieldErrorLabel = new Label();
+    private Label accountNameTextFieldErrorLabel = new Label();
+
+    private Button goToMainMenuButton = new Button("Main menu");
+
+    public MappingView(ObservableList<MappingRecord> data) {
         // p.getValue() returns the Object instance of the data for a particular TableView row
         groupColumn.setCellValueFactory(p -> p.getValue().groupProperty());
-        agressoNumberColumn.setCellValueFactory(p -> p.getValue().agressoAccountNumberProperty());
-        agressoNameColumn.setCellValueFactory(p -> p.getValue().agressoAccountNameProperty());
-        amountColumn.setCellValueFactory(p -> p.getValue().amountProperty());
-        valutaColumn.setCellValueFactory(p -> p.getValue().valutaProperty());
-        countryColumn.setCellValueFactory(p -> p.getValue().countryProperty());
-        amountInEuroColumn.setCellValueFactory(p -> p.getValue().amountInEuroProperty());
-        yearColumn.setCellValueFactory(p -> p.getValue().yearProperty());
-        quarterColumn.setCellValueFactory(p -> p.getValue().quarterProperty());
+        accountNumberColumn.setCellValueFactory(p -> p.getValue().accountNumberProperty());
+        accountNameColumn.setCellValueFactory(p -> p.getValue().accountNameProperty());
+        mainCategoryColumn.setCellValueFactory(p -> p.getValue().mainCategoryProperty());
+        subCategoryColumn.setCellValueFactory(p -> p.getValue().subCategoryProperty());
 
         groupColumn.setStyle("-fx-alignment: CENTER;");
-        agressoNumberColumn.setStyle("-fx-alignment: TOP-RIGHT;");
-        valutaColumn.setStyle("-fx-alignment: CENTER;");
-        countryColumn.setStyle("-fx-alignment: CENTER;");
-        yearColumn.setStyle("-fx-alignment: CENTER;");
-        quarterColumn.setStyle("-fx-alignment: CENTER;");
+        accountNumberColumn.setStyle("-fx-alignment: TOP-RIGHT;");
+        accountNameColumn.setStyle("-fx-alignment: CENTER;");
+        mainCategoryColumn.setStyle("-fx-alignment: CENTER;");
+        subCategoryColumn.setStyle("-fx-alignment: CENTER;");
 
-        amountColumn.setCellFactory(col ->
-                new TableCell<AgressoRecord, Number>() {
-                    @Override
-                    public void updateItem(Number amount, boolean empty) {
-                        super.updateItem(amount, empty);
-                        if (empty) {
-                            setText(null);
-                        } else {
-                            setText(decimalFormat.format(amount.doubleValue()));
-                            setStyle("-fx-alignment: top-right;");
-
-                        }
-                    }
-                });
-
-        amountInEuroColumn.setCellFactory(col ->
-                new TableCell<AgressoRecord, Number>() {
-                    @Override
-                    public void updateItem(Number amountInEuro, boolean empty) {
-                        super.updateItem(amountInEuro, empty);
-                        if (empty) {
-                            setText(null);
-                        } else {
-                            setText(decimalFormat.format(amountInEuro.doubleValue()));
-                            setStyle("-fx-alignment: top-right;");
-                        }
-                    }
-                });
-
-        table.getColumns().addAll(groupColumn, agressoNumberColumn, agressoNameColumn, amountColumn, valutaColumn,
-                countryColumn, amountInEuroColumn, yearColumn, quarterColumn);
+        table.getColumns().addAll(groupColumn, accountNumberColumn, accountNameColumn, mainCategoryColumn, subCategoryColumn);
         table.setItems(data);
         getChildren().add(table);
+        getChildren().add(goToMainMenuButton);
         setHeight(Double.MAX_VALUE);
     }
+
+    public Button getAddNewMainCategoryButton() {
+        return addNewMainCategoryButton;
+    }
+
+    public Button getAddNewSubCategoryButton() {
+        return addNewSubCategoryButton;
+    }
+
+    public Button getAddNewTableMappingButton() {
+        return addNewTableMappingButton;
+    }
+
+    public Button getGoToMainMenuButton() {
+        return goToMainMenuButton;
+    }
+
+    public TextField getGroupTextField() {
+        return groupTextField;
+    }
+
+    public TextField getAccountNumberTextField() {
+        return accountNumberTextField;
+    }
+
+    public TextField getAccountNameTextField() {
+        return accountNameTextField;
+    }
+
 }

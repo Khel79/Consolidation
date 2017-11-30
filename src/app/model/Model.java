@@ -7,10 +7,10 @@ import java.util.List;
 public class Model {
 
     private List<AgressoRecord> agressoRecordList = new ArrayList<AgressoRecord>();
-    private String conversionFileName = "conversionrates.csv";
-    private String mainCategoriesFileName = "maincategories.csv";
-    private String subcategoriesFileName = "subcategories.csv";
-    private String categoryMappingFileName = "categorymapping.csv";
+    private String conversionFileName = "src" + File.separator + "files" + File.separator + "conversionrates.csv";
+    private String mainCategoriesFileName = "src" + File.separator + "files" + File.separator + "maincategories.csv";
+    private String subcategoriesFileName = "src" + File.separator + "files" + File.separator + "subcategories.csv";
+    private String categoryMappingFileName = "src" + File.separator + "files" + File.separator + "categorymapping.csv";
 
     private List<MappingRecord> mappingTableList = new ArrayList<>();
     private List<String> mainCategoriesList = new ArrayList<>();
@@ -51,9 +51,9 @@ public class Model {
         subCategoriesList = FileManager.readFromFile(file.toPath().toString());
     }
 
-    public void readCategoryMappingFile(File file) {
-        System.out.println("Opening this file: " + file.toPath().toString());
-        categoryMappingList = FileManager.readFromFile(file.toPath().toString());
+    public void readCategoryMappingFile() {
+        System.out.println("Opening this file: " + categoryMappingFileName);
+        categoryMappingList = FileManager.readFromFile(categoryMappingFileName);
     }
 
     public void addMappingRecord(String group, String accountNumber, String accountName, String mainCategory, String subCategory){
@@ -61,14 +61,14 @@ public class Model {
         mappingTableList.add(mappingRecord);
     }
 
-    public void createMappingTable(List<String> categoryMapping) {
-        for (int i = 1; i < categoryMapping.size(); i++) { // i=1 to skip header row
-            String[] temp = categoryMapping.get(i).split(",");
+    public void createMappingTable() {
+        for (int i = 1; i < categoryMappingList.size(); i++) { // i=1 to skip header row
+            String[] temp = categoryMappingList.get(i).split(";");
             addMappingRecord(temp[0], temp[1], temp[2], temp[3], temp[4]);
         }
     }
 
-    public void writeMappingTableToFile(List<MappingRecord> mappingTable) {
+    public void writeMappingTableToFile(String fileName, List<MappingRecord> mappingTable) {
         List<String> mappingData = new ArrayList<>();
         for (MappingRecord record : mappingTable) {
             String temp = record.getGroup() + "," +
@@ -78,7 +78,7 @@ public class Model {
                     record.getSubCategory() + ";";
             mappingData.add(temp);
         }
-        FileManager.writeDataToFile(categoryMappingFileName, mappingData);
+        FileManager.writeDataToFile(fileName, mappingData);
     }
 
     public void readAgressoFile(File file, String valuta, String year, String quarter, double conversionRate) {

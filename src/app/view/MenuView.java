@@ -12,6 +12,7 @@ import javafx.stage.FileChooser;
 
 import java.time.LocalDate;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class MenuView extends BorderPane {
 
     private final GridPane centerGridPane = new GridPane();
@@ -37,14 +38,8 @@ public class MenuView extends BorderPane {
 
     private Button openAgressoFileButton = new Button("Select an Agresso export file");
 
-    /**
-     * private Button openEURfileButton = new Button("Select Agresso export in EUR");
-     * private Button openKESfileButton = new Button("Select Agresso export in KES");
-     * private Button openMYRfileButton = new Button("Select Agresso export in MYR");
-     * private Button openUSDfileButton = new Button("Select Agresso export in USD");
-     */
-
     private Button showDataButton = new Button("Show ALL data");
+    private Button showMappingTableButton = new Button("Open mapping table");
 
     private Button exitButton = new Button("Exit");
 
@@ -100,16 +95,10 @@ public class MenuView extends BorderPane {
 
         centerGridPane.add(openAgressoFileButton, 0, 4);
 
-        /**
-         centerGridPane.add(openEURfileButton, 0, 4);
-         centerGridPane.add(openKESfileButton, 0, 5);
-         centerGridPane.add(openMYRfileButton, 0, 6);
-         centerGridPane.add(openUSDfileButton, 0, 7);
-         */
-
         centerGridPane.add(showDataButton, 0, 9);
+        centerGridPane.add(showMappingTableButton, 0, 11);
 
-        centerGridPane.add(exitButton, 3, 11);
+        centerGridPane.add(exitButton, 3, 13);
     }
 
     public String getYearComboBoxValue() {
@@ -147,6 +136,8 @@ public class MenuView extends BorderPane {
     public Button getShowDataButton() {
         return showDataButton;
     }
+
+    public Button getShowMappingTableButton() { return showMappingTableButton; }
 
     public Button getExitButton() {
         return exitButton;

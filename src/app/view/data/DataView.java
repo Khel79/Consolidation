@@ -3,6 +3,7 @@ package app.view.data;
 import app.model.AgressoRecord;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -26,10 +27,11 @@ public class DataView extends VBox {
     private TableColumn<AgressoRecord, String> yearColumn = new TableColumn<AgressoRecord, String>("Year");
     private TableColumn<AgressoRecord, String> quarterColumn = new TableColumn<AgressoRecord, String>("Quarter");
 
+    private Button goToMainMenuButton = new Button("Main menu");
+
     public DataView(ObservableList<AgressoRecord> data) {
 
         DecimalFormat decimalFormat = new DecimalFormat("###,###,##0.00");
-        TableView<AgressoRecord> tableView = new TableView<AgressoRecord>(data);
 
         // p.getValue() returns the Object instance of the data for a particular TableView row
         groupColumn.setCellValueFactory(p -> p.getValue().groupProperty());
@@ -82,6 +84,7 @@ public class DataView extends VBox {
                 countryColumn, amountInEuroColumn, yearColumn, quarterColumn);
         table.setItems(data);
         getChildren().add(table);
+        getChildren().add(goToMainMenuButton);
         setHeight(Double.MAX_VALUE);
 
         /**
@@ -108,5 +111,9 @@ public class DataView extends VBox {
             }
         });
         */
+    }
+
+    public Button getGoToMainMenuButton() {
+        return goToMainMenuButton;
     }
 }
