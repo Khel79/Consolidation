@@ -23,6 +23,10 @@ public class MappingPresenter {
         //mappingView.getAddNewSubCategoryButton().setOnAction(e -> addSubCategoryAction());
         //mappingView.getAddNewTableMappingButton().setOnAction(e -> addMappingAction());
         mappingView.getGoToMainMenuButton().setOnAction(e -> showMainMenuAction());
+        mappingView.initializeValuesForGroupComboBox();
+        mappingView.initializeValuesForMainCategoryComboBox(model.getMainCategoriesList());
+        mappingView.initializeValuesForSubCategoryComboBox(model.getSubCategoriesList());
+        mappingView.getSaveButton().setOnAction(e -> saveRecordAction());
     }
 
     private void showMainMenuAction() {
@@ -31,5 +35,10 @@ public class MappingPresenter {
         MenuPresenter menuPresenter = new MenuPresenter(model, menuView, primaryStage);
         mappingView.getScene().setRoot(menuView);
         menuView.getScene().getWindow().sizeToScene();
+    }
+
+    private void saveRecordAction() {
+        model.addMappingRecord(mappingView.getGroupComboBoxValue(), mappingView.getAccountNumberTextFieldValue(),mappingView.getAccountNameTextFieldValue(),mappingView.getMainCategoryComboBoxValue(), mappingView.getSubCategoryComboBoxValue());
+        model.writeMappingTableToFile();
     }
 }

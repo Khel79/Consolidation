@@ -24,6 +24,7 @@ public class MenuPresenter {
         this.model = model;
         this.primaryStage = primaryStage;
 
+        readCategoryDataFromFiles();
         initialiseEventHandling();
     }
 
@@ -32,6 +33,11 @@ public class MenuPresenter {
         menuView.getShowDataButton().setOnAction(e -> showDataAction());
         menuView.getShowMappingTableButton().setOnAction(e -> showMappingTableAction());
         menuView.getExitButton().setOnAction(e -> exitApplicationAction());
+    }
+
+    private void readCategoryDataFromFiles() {
+        model.readMainCategoryFile();
+        model.readSubCategoryFile();
     }
 
     private void readMappingDataFromFiles() {

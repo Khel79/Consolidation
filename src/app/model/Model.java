@@ -21,9 +21,9 @@ public class Model {
     }
 
     public double readConversionRateFile(File file, String conversionType) {
-        System.out.println("Opening this file: " + file.toPath().toString());
-        List<String> data = FileManager.readFromFile(file.toPath().toString());
-        double conversionRate = 0; // leaving this at zero will show in the results if the switch failed
+        System.out.println("Opening this file: " + conversionFileName);
+        List<String> data = FileManager.readFromFile(conversionFileName);
+        double conversionRate = 0; // leaving this at zero will show if the switch failed, because the amount will result in 0
         switch (conversionType) {
             case "Already in EUR":
                 conversionRate = 1;
@@ -41,14 +41,20 @@ public class Model {
         return conversionRate;
     }
 
-    public void readMainCategoryFile(File file) {
-        System.out.println("Opening this file: " + file.toPath().toString());
-        mainCategoriesList = FileManager.readFromFile(file.toPath().toString());
+    public void readMainCategoryFile() {
+        System.out.println("Opening this file: " + mainCategoriesFileName);
+        mainCategoriesList = FileManager.readFromFile(mainCategoriesFileName);
+        for (int i = 0; i < mainCategoriesList.size(); i++) {
+            mainCategoriesList.set(i, mainCategoriesList.get(i).replace(";", ""));
+        }
     }
 
-    public void readSubCategoryFile(File file) {
-        System.out.println("Opening this file: " + file.toPath().toString());
-        subCategoriesList = FileManager.readFromFile(file.toPath().toString());
+    public void readSubCategoryFile() {
+        System.out.println("Opening this file: " + subcategoriesFileName);
+        subCategoriesList = FileManager.readFromFile(subcategoriesFileName);
+        for (int i = 0; i < subCategoriesList.size(); i++) {
+            subCategoriesList.set(i, subCategoriesList.get(i).replace(";", ""));
+        }
     }
 
     public void readCategoryMappingFile() {
@@ -56,21 +62,24 @@ public class Model {
         categoryMappingList = FileManager.readFromFile(categoryMappingFileName);
     }
 
-    public void addMappingRecord(String group, String accountNumber, String accountName, String mainCategory, String subCategory){
+    public void addMappingRecord(String group, String accountNumber, String accountName, String mainCategory, String subCategory) {
         MappingRecord mappingRecord = new MappingRecord(group, accountNumber, accountName, mainCategory, subCategory);
         mappingTableList.add(mappingRecord);
     }
 
     public void createMappingTable() {
         for (int i = 1; i < categoryMappingList.size(); i++) { // i=1 to skip header row
-            String[] temp = categoryMappingList.get(i).split(";");
-            addMappingRecord(temp[0], temp[1], temp[2], temp[3], temp[4]);
+            if (!categoryMappingList.get(i).isEmpty()) {
+                String[] temp = categoryMappingList.get(i).split(",");
+                addMappingRecord(temp[0], temp[1], temp[2], temp[3], temp[4].replaceAll(";", ""));
+            }
         }
     }
 
-    public void writeMappingTableToFile(String fileName, List<MappingRecord> mappingTable) {
+    public void writeMappingTableToFile() {
         List<String> mappingData = new ArrayList<>();
-        for (MappingRecord record : mappingTable) {
+        mappingData.add("Group,AccountNumber,AccountName,MainCategory,SubCategory;"); // header-row
+        for (MappingRecord record : mappingTableList) {
             String temp = record.getGroup() + "," +
                     record.getAccountNumber() + "," +
                     record.getAccountName() + "," +
@@ -78,7 +87,7 @@ public class Model {
                     record.getSubCategory() + ";";
             mappingData.add(temp);
         }
-        FileManager.writeDataToFile(fileName, mappingData);
+        FileManager.writeDataToFile(categoryMappingFileName, mappingData);
     }
 
     public void readAgressoFile(File file, String valuta, String year, String quarter, double conversionRate) {
@@ -99,11 +108,19 @@ public class Model {
         return agressoRecordList;
     }
 
-    public List<MappingRecord> getMappingTableList() { return mappingTableList; }
+    public List<MappingRecord> getMappingTableList() {
+        return mappingTableList;
+    }
 
-    public List<String> getMainCategoriesList() { return mainCategoriesList; }
+    public List<String> getMainCategoriesList() {
+        return mainCategoriesList;
+    }
 
-    public List<String> getSubCategoriesList() { return subCategoriesList; }
+    public List<String> getSubCategoriesList() {
+        return subCategoriesList;
+    }
 
-    public List<String> getCategoryMappingList() { return categoryMappingList; }
+    public List<String> getCategoryMappingList() {
+        return categoryMappingList;
+    }
 }

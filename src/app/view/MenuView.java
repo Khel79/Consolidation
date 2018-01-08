@@ -26,9 +26,9 @@ public class MenuView extends BorderPane {
     private VBox leftBox = new VBox();
     private VBox rightBox = new VBox();
 
-    private ComboBox yearComboBox = new ComboBox();
-    private ComboBox quarterComboBox = new ComboBox();
-    private ComboBox valutaConversionComboBox = new ComboBox();
+    private ComboBox<Integer> yearComboBox = new ComboBox<>();
+    private ComboBox<String> quarterComboBox = new ComboBox<>();
+    private ComboBox<String> valutaConversionComboBox = new ComboBox<>();
     private Label yearLabel = new Label("Select the year for which you are making an import: ");
     private Label quarterLabel = new Label("Select the quarter for which you are making an import: ");
     private Label valutaConversionLabel = new Label("Select the valuta conversion: ");
@@ -106,14 +106,14 @@ public class MenuView extends BorderPane {
     }
 
     public String getQuarterComboBoxValue() {
-        return quarterComboBox.getValue().toString();
+        return quarterComboBox.getValue();
     }
 
     public String getValutaConversionRateComboBoxValue() {
-        if (valutaConversionComboBox.getValue().toString().equals(valutaConversionRatesChoices[0])) {
-            return valutaConversionComboBox.getValue().toString().substring(11, 14);
+        if (valutaConversionComboBox.getValue().equals(valutaConversionRatesChoices[0])) {
+            return valutaConversionComboBox.getValue().substring(11, 14);
         } else {
-            return valutaConversionComboBox.getValue().toString().substring(0, 3);
+            return valutaConversionComboBox.getValue().substring(0, 3);
         }
     }
 
