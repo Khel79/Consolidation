@@ -3,10 +3,9 @@ package app.view.mapping;
 import app.model.MappingRecord;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
@@ -24,6 +23,7 @@ public class MappingView extends VBox {
     private TableColumn<MappingRecord, String> mainCategoryColumn = new TableColumn<>("Main Category");
     private TableColumn<MappingRecord, String> subCategoryColumn = new TableColumn<>("Subcategory");
 
+    private List<String> mainCategoriesList = new ArrayList<>();
     private List<String> subCategoriesList = new ArrayList<>();
 
     private Label mainCategoryComboBoxLabel = new Label("Select the main category: ");
@@ -32,10 +32,6 @@ public class MappingView extends VBox {
     private ComboBox<String> groupComboBox = new ComboBox<>();
     private ComboBox<String> subCategoryComboBox = new ComboBox<>();
     private ComboBox<String> mainCategoryComboBox = new ComboBox<>();
-
-    private Button addNewMainCategoryButton = new Button("Add a new main category");
-    private Button addNewSubCategoryButton = new Button("Add a new sub category");
-    private Button addNewTableMappingButton = new Button("Add a new tablemapping");
 
     private TextField accountNumberTextField = new TextField();
     private TextField accountNameTextField = new TextField();
@@ -49,7 +45,17 @@ public class MappingView extends VBox {
 
     private GridPane gridPane = new GridPane();
 
-    private Button saveButton = new Button("Save the above record");
+    private Button saveRecordButton = new Button("Save the above record");
+
+    private Label newMainCategoryTextFieldLabel = new Label("Enter the name:");
+    private TextField newMainCategoryTextField = new TextField();
+    private Button saveNewMainCategoryButton = new Button("Add new main category");
+
+    private Label newSubCategoryTextFieldLabel = new Label("Enter the name:");
+    private TextField newSubCategoryTextField = new TextField();
+    private Label newSubCategoryMainCategorySelectionLabel = new Label("Select the related main category");
+    private ComboBox<String> newSubCategoryMainCategorySelectionComboBox = new ComboBox<>();
+    private Button saveNewSubCategoryButton = new Button("Add new sub category");
 
     private Button goToMainMenuButton = new Button("Main menu");
 
@@ -72,7 +78,9 @@ public class MappingView extends VBox {
         getChildren().add(table);
         getChildren().add(goToMainMenuButton);
 
-        // Section for creating a new mapping combination
+        // Section for creating a new record/mapping combination
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
         gridPane.add(new Label("Add a new record"), 0, 0);
 
         gridPane.add(groupComboBoxLabel, 0, 2);
@@ -92,18 +100,38 @@ public class MappingView extends VBox {
         gridPane.add(subCategoryComboBoxLabel, 0, 6);
         gridPane.add(subCategoryComboBox, 1, 6);
 
-        gridPane.add(saveButton, 1, 7);
+        gridPane.add(saveRecordButton, 1, 7);
+
+        // Section for creating a new main category
+        gridPane.add(new Label("Add a new main category"), 3, 0);
+        gridPane.add(newMainCategoryTextFieldLabel, 3, 2);
+        gridPane.add(newMainCategoryTextField, 4, 2);
+        gridPane.add(saveNewMainCategoryButton, 4, 4);
+
+        // Section for creating a new subcategory
+        gridPane.add(new Label("Add a new sub category"), 6, 0);
+        gridPane.add(newSubCategoryTextFieldLabel, 6, 2);
+        gridPane.add(newSubCategoryTextField, 7, 2);
+        gridPane.add(newSubCategoryMainCategorySelectionLabel, 6, 3);
+        gridPane.add(newSubCategoryMainCategorySelectionComboBox, 7, 3);
+        gridPane.add(saveNewSubCategoryButton, 7, 4);
 
         getChildren().add(gridPane);
+        setMargin(gridPane, new Insets(10, 10, 10, 10));
         setHeight(Double.MAX_VALUE);
     }
+
+    // TODO: 1. Show notification after saving a value that the save was successful
+    // TODO: 2. Clear the textfield(s) and or combobox selection after a successful save
+    // TODO: 3. Check for duplicate subcategory + maincategory combination creation on save
+    // TODO: 4. Refactor List<String> to Map<String,String> (prevents duplicates)
 
     public void initializeValuesForGroupComboBox() {
         groupComboBox.getItems().addAll("B", "R");
     }
 
     public void initializeValuesForMainCategoryComboBox(List<String> mainCategoryList) {
-        for (String category: mainCategoryList) {
+        for (String category : mainCategoryList) {
             mainCategoryComboBox.getItems().add(category);
         }
         mainCategoryComboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
@@ -118,14 +146,32 @@ public class MappingView extends VBox {
         });
     }
 
+    public void initializeValuesForNewSubCategoryMainCategoryComboBox(List<String> mainCategoriesList) {
+        this.mainCategoriesList = mainCategoriesList;
+        for (String category : mainCategoriesList) {
+            newSubCategoryMainCategorySelectionComboBox.getItems().add(category);
+        }
+    }
+
     public void initializeValuesForSubCategoryComboBox(List<String> subCategoriesList) {
         subCategoryComboBox.setDisable(true);
         this.subCategoriesList = subCategoriesList;
     }
 
+    public void reloadMainCategoryList(List<String> mainCategoriesList) {
+        this.mainCategoriesList = mainCategoriesList;
+        initializeValuesForMainCategoryComboBox(mainCategoriesList);
+        initializeValuesForNewSubCategoryMainCategoryComboBox(mainCategoriesList);
+    }
+
+    public void reloadSubCategoryList(List<String> subCategoriesList) {
+        this.subCategoriesList = subCategoriesList;
+        initializeValuesForSubCategoryComboBox(subCategoriesList);
+    }
+
     private List<String> getSubCategoriesForMainCategory(String mainCategory) {
         List<String> subcategoryList = new ArrayList<>();
-        for (String subcategory: subCategoriesList) {
+        for (String subcategory : subCategoriesList) {
             if (subcategory.split(",")[0].equals(mainCategory)) {
                 subcategoryList.add(subcategory.split(",")[1].replace(";", ""));
             }
@@ -133,35 +179,109 @@ public class MappingView extends VBox {
         return subcategoryList;
     }
 
+    public boolean checkSaveRecordValues() {
+        boolean save = true;
+        if (groupComboBox.getSelectionModel().isEmpty() ||
+                mainCategoryComboBox.getSelectionModel().isEmpty() ||
+                subCategoryComboBox.getSelectionModel().isEmpty() ||
+                accountNumberTextField.getText().isEmpty() ||
+                accountNameTextField.getText().isEmpty()) {
+            save = false;
+            showEmptyValuesAlert();
+        }
+        return save;
+    }
+
+    public boolean checkSaveNewMainCategoryValues() {
+        boolean save = true;
+        if (newMainCategoryTextField.getText().isEmpty()) {
+            save = false;
+            showEmptyValuesAlert();
+        } else {
+            for (String mainCategory : mainCategoriesList) {
+                if (mainCategory.equals(newMainCategoryTextField.getText())) {
+                    save = false;
+                    showValueAlreadyExistsAlert();
+                }
+            }
+        }
+        return save;
+    }
+
+    public boolean checkSaveNewSubCategoryRecordValues() {
+        boolean save = true;
+        if (newSubCategoryMainCategorySelectionComboBox.getSelectionModel().isEmpty() ||
+                newSubCategoryTextField.getText().isEmpty()) {
+            save = false;
+            showEmptyValuesAlert();
+        } else {
+            for (String subCategory : subCategoriesList) {
+                if (subCategory.equals(newSubCategoryTextField.getText())) {
+                    save = false;
+                    showValueAlreadyExistsAlert();
+                }
+            }
+        }
+        return save;
+    }
+
+    private void showValueAlreadyExistsAlert() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Value already exists ERROR");
+        alert.setHeaderText("ERROR: Value already exists");
+        alert.setContentText("You are trying to save a record, but the entered value already exists. " +
+                "Use the mapping option to link an existing main category to an existing sub category.");
+
+        alert.showAndWait();
+    }
+
+    private void showEmptyValuesAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Empty value Warning");
+        alert.setHeaderText("Warning: Empty values");
+        alert.setContentText("You are trying to save a record, but not all the values are filled out. Please double-check that all fields have a value.");
+
+        alert.showAndWait();
+    }
+
     public String getGroupComboBoxValue() {
         return groupComboBox.getValue();
     }
+
     public String getMainCategoryComboBoxValue() {
         return mainCategoryComboBox.getValue();
     }
+
     public String getSubCategoryComboBoxValue() {
         return subCategoryComboBox.getValue();
     }
 
-
-    public Button getAddNewMainCategoryButton() {
-        return addNewMainCategoryButton;
+    public TextField getNewMainCategoryTextField() {
+        return newMainCategoryTextField;
     }
 
-    public Button getAddNewSubCategoryButton() {
-        return addNewSubCategoryButton;
+    public TextField getNewSubCategoryTextField() {
+        return newSubCategoryTextField;
     }
 
-    public Button getAddNewTableMappingButton() {
-        return addNewTableMappingButton;
+    public ComboBox<String> getNewSubCategoryMainCategorySelectionComboBox() {
+        return newSubCategoryMainCategorySelectionComboBox;
     }
 
     public Button getGoToMainMenuButton() {
         return goToMainMenuButton;
     }
 
-    public Button getSaveButton() {
-        return saveButton;
+    public Button getSaveRecordButton() {
+        return saveRecordButton;
+    }
+
+    public Button getSaveNewMainCategoryButton() {
+        return saveNewMainCategoryButton;
+    }
+
+    public Button getSaveNewSubCategoryButton() {
+        return saveNewSubCategoryButton;
     }
 
     public String getAccountNumberTextFieldValue() {

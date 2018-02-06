@@ -21,7 +21,6 @@ public class Model {
     }
 
     public double readConversionRateFile(File file, String conversionType) {
-        System.out.println("Opening this file: " + conversionFileName);
         List<String> data = FileManager.readFromFile(conversionFileName);
         double conversionRate = 0; // leaving this at zero will show if the switch failed, because the amount will result in 0
         switch (conversionType) {
@@ -42,7 +41,6 @@ public class Model {
     }
 
     public void readMainCategoryFile() {
-        System.out.println("Opening this file: " + mainCategoriesFileName);
         mainCategoriesList = FileManager.readFromFile(mainCategoriesFileName);
         for (int i = 0; i < mainCategoriesList.size(); i++) {
             mainCategoriesList.set(i, mainCategoriesList.get(i).replace(";", ""));
@@ -50,7 +48,6 @@ public class Model {
     }
 
     public void readSubCategoryFile() {
-        System.out.println("Opening this file: " + subcategoriesFileName);
         subCategoriesList = FileManager.readFromFile(subcategoriesFileName);
         for (int i = 0; i < subCategoriesList.size(); i++) {
             subCategoriesList.set(i, subCategoriesList.get(i).replace(";", ""));
@@ -58,8 +55,23 @@ public class Model {
     }
 
     public void readCategoryMappingFile() {
-        System.out.println("Opening this file: " + categoryMappingFileName);
         categoryMappingList = FileManager.readFromFile(categoryMappingFileName);
+    }
+
+    public void addMainCategory(String mainCategoryName) {
+       mainCategoriesList.add(mainCategoryName);
+    }
+
+    public void writeMainCategoriesToFile() {
+        FileManager.writeDataToFile(mainCategoriesFileName, mainCategoriesList);
+    }
+
+    public void addSubCategory(String mainCategoryName, String subCategoryName) {
+        subCategoriesList.add(mainCategoryName + "," + subCategoryName);
+    }
+
+    public void writeSubCategoriesToFile() {
+        FileManager.writeDataToFile(subcategoriesFileName, subCategoriesList);
     }
 
     public void addMappingRecord(String group, String accountNumber, String accountName, String mainCategory, String subCategory) {

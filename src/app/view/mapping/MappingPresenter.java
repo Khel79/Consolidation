@@ -26,7 +26,10 @@ public class MappingPresenter {
         mappingView.initializeValuesForGroupComboBox();
         mappingView.initializeValuesForMainCategoryComboBox(model.getMainCategoriesList());
         mappingView.initializeValuesForSubCategoryComboBox(model.getSubCategoriesList());
-        mappingView.getSaveButton().setOnAction(e -> saveRecordAction());
+        mappingView.initializeValuesForNewSubCategoryMainCategoryComboBox(model.getMainCategoriesList());
+        mappingView.getSaveRecordButton().setOnAction(e -> saveRecordAction(mappingView.checkSaveRecordValues()));
+        mappingView.getSaveNewMainCategoryButton().setOnAction(e -> saveNewMainCategoryAction(mappingView.checkSaveNewMainCategoryValues()));
+        mappingView.getSaveNewSubCategoryButton().setOnAction(e -> saveNewSubCategoryAction(mappingView.checkSaveNewSubCategoryRecordValues()));
     }
 
     private void showMainMenuAction() {
@@ -37,8 +40,28 @@ public class MappingPresenter {
         menuView.getScene().getWindow().sizeToScene();
     }
 
-    private void saveRecordAction() {
-        model.addMappingRecord(mappingView.getGroupComboBoxValue(), mappingView.getAccountNumberTextFieldValue(),mappingView.getAccountNameTextFieldValue(),mappingView.getMainCategoryComboBoxValue(), mappingView.getSubCategoryComboBoxValue());
-        model.writeMappingTableToFile();
+    private void saveRecordAction(Boolean allValuesEntered) {
+        if (allValuesEntered) {
+            model.addMappingRecord(mappingView.getGroupComboBoxValue(), mappingView.getAccountNumberTextFieldValue(), mappingView.getAccountNameTextFieldValue(), mappingView.getMainCategoryComboBoxValue(), mappingView.getSubCategoryComboBoxValue());
+            model.writeMappingTableToFile();
+            mappingView.reloadMainCategoryList(model.getMainCategoriesList());
+            mappingView.reloadSubCategoryList(model.getSubCategoriesList());
+        }
+    }
+
+    private void saveNewMainCategoryAction(Boolean allValuesEntered) {
+        if (allValuesEntered) {
+            model.addMainCategory(mappingView.getNewMainCategoryTextField().getText());
+            model.writeMainCategoriesToFile();
+            mappingView.reloadMainCategoryList(model.getMainCategoriesList());
+        }
+    }
+
+    private void saveNewSubCategoryAction(Boolean allValuesEntered) {
+        if (allValuesEntered) {
+            model.addSubCategory(mappingView.getNewSubCategoryMainCategorySelectionComboBox().getValue(), mappingView.getNewSubCategoryTextField().getText());
+            model.writeSubCategoriesToFile();
+            mappingView.reloadSubCategoryList(model.getSubCategoriesList());
+        }
     }
 }
